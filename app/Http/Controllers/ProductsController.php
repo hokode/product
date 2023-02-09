@@ -5,12 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Products;
+use App\Models\User;
 use App\Notifications\EmailNotification;
 
 
 
 class ProductsController extends Controller
 {
+
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->user = new User();    
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -60,7 +74,7 @@ class ProductsController extends Controller
            }
          
           //lets get the user id of the authenticated user
-           $request->request->add(['created_by' => 1]); //add request created_by
+           $request->request->add(['created_by' => $this->user->id]); //add request created_by
    
    
            //lets add and get a result use create() and add all since we are not modifying the request 
@@ -70,15 +84,15 @@ class ProductsController extends Controller
 
                 //lets send out notification email
                 $project = [
-                    'greeting' => 'Hi ',
+                    'greeting' => 'Hi'.$this->user->name,
                     'body' => 'This product has been submitted by you.',
                     'thanks' => 'Thank you this is us',
-                    'actionText' => 'View Project',
+                    'actionText' => 'View Product',
                     'actionURL' => url('/'),
                     'id' => 1
                 ];
           
-                Notification::send($user, new EmailNotification($project));
+                Notification::send($this->user, new EmailNotification($project));
 
    
                 return response()->json([
