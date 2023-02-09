@@ -249,7 +249,6 @@ class ProductsController extends Controller
     {
         return Validator::make($data, [
             'product_name' => ['required', 'string', 'max:100'],
-            'created_by' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'integer'],
         ]);
     }
